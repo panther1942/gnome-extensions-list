@@ -1,0 +1,16 @@
+GNOME Shell extension to tell you how long you are using your
+computer. It does not have any settings or menus. After approximately
+one minute you will start seeing the length of your current session in
+the top GNOME Shell panel close to the date and time of day. This
+number will reset and disappear after you stop using you keyboard,
+mouse etc. for 2 minutes.
+
+Inspired by Aware app for Mac OS, see https://awaremac.com/.
+Bits and pieces of knowledge about GNOME Shell interfaces were taken
+from GNOME Shell Clock Override, see https://github.com/stuartlangridge/gnome-shell-clock-override
+and GNOME Pomodoro, see https://gnomepomodoro.org/.
+
+This software is licensed under the GPL.
+
+This project is not affiliated with, authorized by, sponsored by, or
+otherwise approved by GNOME Foundation.

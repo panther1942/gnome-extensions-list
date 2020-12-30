@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extension-keysindicator">
+    <schema path="/org/gnome/shell/extensions/keysindicator/" id="org.gnome.shell.extensions.keysindicator">
+        <key name="styles" type="s">
+            <default>'popup'</default>
+            <summary>Set indicator style</summary>
+        </key>
+        <key name="position-side" type="s">
+            <default>'right'</default>
+            <summary>Set indicator position on left/right of panel</summary>
+        </key>
+        <key name="position-index" type="i">
+            <default>0</default>
+            <summary>Index in the corner, 0 is on leftest</summary>
+        </key>
+        <key name="highlight-mode" type="s">
+            <default>'highlight-red'</default>
+            <summary>Highlight CAPS and NUM</summary>
+        </key>
+    </schema>
+</schemalist>

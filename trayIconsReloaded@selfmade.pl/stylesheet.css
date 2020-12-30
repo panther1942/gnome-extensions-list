@@ -1,0 +1,21 @@
+.TrayIndicator StButton, 
+.TrayIndicatorPopup StButton {
+	transition-property: background-color;
+	transition-duration: .1s;
+	transition-timing-function: linear;
+}
+
+.TrayIndicator StButton:hover, 
+.TrayIndicatorPopup StButton:hover {
+	background-color: rgba(255, 255, 255, .1);
+}
+
+.TrayIndicatorPopup StButton {
+	padding: 8px;
+	border-radius: 6px;
+}
+
+.panel-button.TrayIndicator {
+	-natural-hpadding: 0;
+	-minimum-hpadding: 0;
+}
