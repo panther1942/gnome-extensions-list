@@ -375,8 +375,7 @@ const EasyScreenCast_Indicator = new Lang.Class({
 
         for (var i = 0; i < this.AreaMenuItem.length; i++) {
             this.AreaMenuItem[i] = new PopupMenu.PopupMenuItem(
-                this.AreaType[i],
-                {
+                this.AreaType[i], {
                     reactive: true,
                     activate: true,
                     hover: true,
@@ -413,20 +412,29 @@ const EasyScreenCast_Indicator = new Lang.Class({
      */
     _createMIWebCam: function () {
         this.WebCamDevice = new Array(_("No WebCam recording"));
+        let deviceList = [];
         //add menu item webcam device from GST
         const devices = this.CtrlWebcam.getDevicesIV();
-        this.WebCamDevice.push.apply(
+        const deviceNames = this.CtrlWebcam.getNameDevices();
+        /* this.WebCamDevice.push.apply(
             this.WebCamDevice,
             this.CtrlWebcam.getNameDevices()
-        );
-        Lib.TalkativeLog("-*-webcam list: " + this.WebCamDevice);
-        this.AreaMenuItem = new Array(this.WebCamDevice.length);
+        ); */
 
-        for (var i = 0; i < this.AreaMenuItem.length; i++) {
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i] && devices[i].get_properties().get_string("device.path")) {
+                Lib.TalkativeLog("-*-device: " + devices[i].get_properties().get_string("device.path"))
+                deviceList.push(devices[i]);
+                this.WebCamDevice.push(deviceNames[i])
+            }
+        }
+        this.AreaMenuItem = [];
+
+        for (var i = 0; i < this.WebCamDevice.length; i++) {
             let iDevice;
 
             if (i === 0) {
-                iDevice = 0;
+                iDevice = -1;
             } else {
                 // FIXME
                 // Although the computer may have just one webcam connected to
@@ -436,20 +444,19 @@ const EasyScreenCast_Indicator = new Lang.Class({
                 // example, a pipewiresrc or a v4l2src. For now, we are only
                 // using v4l2src. This means that even if we pick a Pipewire
                 // device, we will always open it with v4l2src.
-                const device = devices[i - 1];
+                const device = deviceList[i - 1];
                 const devicePath = device
                     .get_properties()
                     .get_string("device.path");
-                if(devicePath){
+                if (devicePath) {
                     iDevice = Number(devicePath.replace(/[^0-9]+/gi, ""));
-                }else{
+                } else {
                     continue;
                 }
             }
 
             this.AreaMenuItem[i] = new PopupMenu.PopupMenuItem(
-                this.WebCamDevice[i],
-                {
+                this.WebCamDevice[i], {
                     reactive: true,
                     activate: true,
                     hover: true,
@@ -460,12 +467,14 @@ const EasyScreenCast_Indicator = new Lang.Class({
             (function (i, iDevice, arr, item) {
                 this.connectMI = function () {
                     this.connect("activate", () => {
+                        Lib.TalkativeLog("-*-debug webcam: " + iDevice);
+
                         Lib.TalkativeLog(
-                            "-*-set webcam device to " + i + " " + arr[i]
+                            "-*-set webcam device to " + i + ": " + arr[i]
                         );
                         Settings.setOption(
                             Settings.DEVICE_WEBCAM_SETTING_KEY,
-                            iDevice
+                            iDevice + 1
                         );
 
                         item.label.text = arr[i];
@@ -490,22 +499,19 @@ const EasyScreenCast_Indicator = new Lang.Class({
      */
     _createMIAudioRec: function () {
         //add std menu item
-        this.AudioChoice = new Array(
-            {
-                desc: _("No audio source"),
-                name: "N/A",
-                port: "N/A",
-                sortable: true,
-                resizeable: true,
-            },
-            {
-                desc: _("Default audio source"),
-                name: "N/A",
-                port: "N/A",
-                sortable: true,
-                resizeable: true,
-            }
-        );
+        this.AudioChoice = new Array({
+            desc: _("No audio source"),
+            name: "N/A",
+            port: "N/A",
+            sortable: true,
+            resizeable: true,
+        }, {
+            desc: _("Default audio source"),
+            name: "N/A",
+            port: "N/A",
+            sortable: true,
+            resizeable: true,
+        });
         //add menu item audio source from PA
         var audioList = this.CtrlAudio.getListInputAudio();
         for (var index in audioList) {
@@ -585,10 +591,9 @@ const EasyScreenCast_Indicator = new Lang.Class({
         });
 
         this.DelayTimeLabel = new St.Label({
-            text:
-                Math.floor(
-                    Settings.getOption("i", Settings.TIME_DELAY_SETTING_KEY)
-                ).toString() + _(" Sec"),
+            text: Math.floor(
+                Settings.getOption("i", Settings.TIME_DELAY_SETTING_KEY)
+            ).toString() + _(" Sec"),
         });
         this.DelayTimeTitle.actor.add_child(this.DelayTimeLabel);
         this.DelayTimeTitle.align = St.Align.END;
@@ -920,7 +925,7 @@ const EasyScreenCast_Indicator = new Lang.Class({
      */
     _replaceStdIndicator: function (OPTtemp) {
         if (Main.panel.statusArea["aggregateMenu"]._screencast === undefined) {
-          return
+            return
         }
         if (OPTtemp) {
             Lib.TalkativeLog("-*-replace STD indicator");
@@ -947,9 +952,9 @@ const EasyScreenCast_Indicator = new Lang.Class({
                 Settings.settings,
                 Meta.KeyBindingFlags.NONE,
                 Shell.ActionMode.NORMAL |
-                    Shell.ActionMode.MESSAGE_TRAY |
-                    Shell.ActionMode.OVERVIEW |
-                    Shell.ActionMode.POPUP,
+                Shell.ActionMode.MESSAGE_TRAY |
+                Shell.ActionMode.OVERVIEW |
+                Shell.ActionMode.POPUP,
                 () => {
                     Lib.TalkativeLog("-*-intercept key combination");
                     this._doRecording();
