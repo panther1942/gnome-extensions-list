@@ -423,7 +423,6 @@ const EasyScreenCast_Indicator = new Lang.Class({
 
         for (let i = 0; i < devices.length; i++) {
             if (devices[i] && devices[i].get_properties().get_string("device.path")) {
-                Lib.TalkativeLog("-*-device: " + devices[i].get_properties().get_string("device.path"))
                 deviceList.push(devices[i]);
                 this.WebCamDevice.push(deviceNames[i])
             }
@@ -467,8 +466,6 @@ const EasyScreenCast_Indicator = new Lang.Class({
             (function (i, iDevice, arr, item) {
                 this.connectMI = function () {
                     this.connect("activate", () => {
-                        Lib.TalkativeLog("-*-debug webcam: " + iDevice);
-
                         Lib.TalkativeLog(
                             "-*-set webcam device to " + i + ": " + arr[i]
                         );
