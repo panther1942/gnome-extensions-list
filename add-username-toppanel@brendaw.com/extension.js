@@ -18,7 +18,7 @@ let children;
 function init() {
   label = new St.Label({ text: GLib.get_real_name(), y_align: Clutter.ActorAlign.CENTER, style_class: "username-label" });
   aggregateMenu = Main.panel.statusArea["aggregateMenu"];
-  powerIndicator = aggregateMenu._power.indicators;
+  powerIndicator = aggregateMenu._power;
 }
 
 function enable() {

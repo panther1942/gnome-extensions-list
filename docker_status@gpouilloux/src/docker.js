@@ -72,8 +72,8 @@ const getDockerActionCommand = (dockerAction, containerName) => {
         case DockerActions.REMOVE:
             return "docker rm " + containerName;
         case DockerActions.OPEN_SHELL:
-            return "docker exec -it " + containerName + " /bin/bash; "
-                + "if [ $? -ne 0 ]; then docker exec -it " + containerName + " /bin/sh; fi;";
+            return "docker exec -it " + containerName + " /bin/bash; " +
+                "if [ $? -ne 0 ]; then docker exec -it " + containerName + " /bin/sh; fi;";
         case DockerActions.RESTART:
             return "docker restart " + containerName;
         case DockerActions.PAUSE:
@@ -101,14 +101,24 @@ var isDockerRunning = () => {
     const [res, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(null, ['/bin/ps', 'cax'], null, 0, null);
 
     const outReader = new Gio.DataInputStream({
-        base_stream: new Gio.UnixInputStream({ fd: out_fd })
+        base_stream: new Gio.UnixInputStream({
+            fd: out_fd
+        })
     });
 
     let dockerRunning = false;
     let hasLine = true;
     do {
         const [out, size] = outReader.read_line(null);
-        if (out && out.toString().indexOf("docker") > -1) {
+        let line = out;
+        if (line) {
+            if (line instanceof Uint8Array) {
+                line = imports.byteArray.toString(line);
+            }
+        }else{
+            continue;
+        }
+        if (line.indexOf("docker") > -1) {
             dockerRunning = true;
         } else if (size <= 0) {
             hasLine = false;
@@ -145,7 +155,7 @@ var getContainers = () => {
  * @param {Function} callback A callback that takes the status, command, and stdErr
  */
 const runBackgroundCommand = (dockerCommand, callback) => {
-    async(
+    async (
         () => GLib.spawn_command_line_async(dockerCommand),
         (res) => callback(res)
     );
@@ -159,12 +169,12 @@ const runBackgroundCommand = (dockerCommand, callback) => {
 const runInteractiveCommand = (dockerCommand, callback) => {
     const defaultShell = GLib.getenv("SHELL");
 
-    const terminalCommand = "gnome-terminal -- "
-        + defaultShell + " -c '"
-        + dockerCommand
-        + "if [ $? -ne 0 ]; then " + defaultShell + "; fi'";
+    const terminalCommand = "gnome-terminal -- " +
+        defaultShell + " -c '" +
+        dockerCommand +
+        "if [ $? -ne 0 ]; then " + defaultShell + "; fi'";
 
-    async(
+    async (
         () => GLib.spawn_command_line_async(terminalCommand),
         (res) => callback(res)
     );
@@ -180,8 +190,8 @@ var runAction = (dockerAction, containerName, callback) => {
     const dockerCommand = getDockerActionCommand(dockerAction, containerName);
 
     dockerAction.isInteractive ?
-        runInteractiveCommand(dockerCommand, callback)
-        : runBackgroundCommand(dockerCommand, callback);
+        runInteractiveCommand(dockerCommand, callback) :
+        runBackgroundCommand(dockerCommand, callback);
 };
 
 /**

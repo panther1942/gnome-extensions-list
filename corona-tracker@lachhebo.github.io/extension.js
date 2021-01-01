@@ -72,7 +72,7 @@ const CoronaMenuButton = new Lang.Class({
         this.panelIcon = new St.Icon({ gicon: this._icon, style_class: 'system-status-icon', icon_size: '16' });
 
         this.menu.removeAll();
-        this.actor.add_actor(this.panelIcon);
+        this.add_actor(this.panelIcon);
 
         // don't postprone the first call by update-time.
         this._queryAPI();

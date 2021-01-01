@@ -177,12 +177,8 @@ const EasyScreenCast_Indicator = new Lang.Class({
             let minutes = Math.floor(newValue / 60);
             newValue = newValue - minutes * 60;
 
-            newValue =
-                padZeros(hours) +
-                ":" +
-                padZeros(minutes) +
-                ":" +
-                padZeros(newValue);
+            let seconds = newValue;
+            newValue = `${padZeros(hours)}:${padZeros(minutes)}:${padZeros(seconds)}`
         }
 
         this.timeLabel.set_text(newValue.toString());
@@ -412,14 +408,10 @@ const EasyScreenCast_Indicator = new Lang.Class({
      */
     _createMIWebCam: function () {
         this.WebCamDevice = new Array(_("No WebCam recording"));
-        let deviceList = [];
         //add menu item webcam device from GST
         const devices = this.CtrlWebcam.getDevicesIV();
         const deviceNames = this.CtrlWebcam.getNameDevices();
-        /* this.WebCamDevice.push.apply(
-            this.WebCamDevice,
-            this.CtrlWebcam.getNameDevices()
-        ); */
+        let deviceList = new Array();
 
         for (let i = 0; i < devices.length; i++) {
             if (devices[i] && devices[i].get_properties().get_string("device.path")) {
@@ -427,7 +419,8 @@ const EasyScreenCast_Indicator = new Lang.Class({
                 this.WebCamDevice.push(deviceNames[i])
             }
         }
-        this.AreaMenuItem = [];
+
+        this.AreaMenuItem = new Array(this.WebCamDevice.length);
 
         for (var i = 0; i < this.WebCamDevice.length; i++) {
             let iDevice;
@@ -447,11 +440,7 @@ const EasyScreenCast_Indicator = new Lang.Class({
                 const devicePath = device
                     .get_properties()
                     .get_string("device.path");
-                if (devicePath) {
-                    iDevice = Number(devicePath.replace(/[^0-9]+/gi, ""));
-                } else {
-                    continue;
-                }
+                iDevice = Number(devicePath.replace(/[^0-9]+/gi, ""));
             }
 
             this.AreaMenuItem[i] = new PopupMenu.PopupMenuItem(

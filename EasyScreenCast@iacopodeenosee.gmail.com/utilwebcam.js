@@ -60,15 +60,15 @@ var HelperWebcam = new Lang.Class({
         for (var ind in listPI) {
             Lib.TalkativeLog(
                 "-@-plugin name: " +
-                    listPI[ind].get_name() +
-                    " Pfilename: " +
-                    listPI[ind].get_filename() +
-                    " Pdesc:  " +
-                    listPI[ind].get_description() +
-                    " Pversion: " +
-                    listPI[ind].get_version() +
-                    " Pload: " +
-                    listPI[ind].is_loaded()
+                listPI[ind].get_name() +
+                " Pfilename: " +
+                listPI[ind].get_filename() +
+                " Pdesc:  " +
+                listPI[ind].get_description() +
+                " Pversion: " +
+                listPI[ind].get_version() +
+                " Pload: " +
+                listPI[ind].is_loaded()
             );
         }
 
@@ -78,7 +78,7 @@ var HelperWebcam = new Lang.Class({
             this.dmBus = this.deviceMonitor.get_bus();
             if (this.dmBus !== null && this.dmBus !== undefined) {
                 Lib.TalkativeLog("-@-dbus created");
-                this.dmBus.add_watch(GLib.PRIORITY_DEFAULT, this._getMsg);
+                this.dmBus.add_watch(GLib.PRIORITY_DEFAULT, this._getMsg.bind(this));
                 let caps = Gst.Caps.new_empty_simple("video/x-raw");
                 this.deviceMonitor.add_filter("Video/Source", caps);
                 this.startMonitor();
@@ -134,9 +134,9 @@ var HelperWebcam = new Lang.Class({
 
             Lib.TalkativeLog(
                 "-@-webcam /dev/video" +
-                    index +
-                    " name: " +
-                    ListDevices[index].display_name
+                index +
+                " name: " +
+                ListDevices[index].display_name
             );
             Lib.TalkativeLog("-@-caps avaiable N°: " + ListCaps[index].length);
             Lib.TalkativeLog(

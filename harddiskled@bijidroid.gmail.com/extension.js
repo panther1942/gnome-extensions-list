@@ -45,7 +45,8 @@ function init() {
 
     layoutManager = new St.BoxLayout({
         vertical: false,
-        style_class: 'harddiskled-container'});
+        style_class: 'harddiskled-container'
+    });
 
     /*
     icon = new St.Icon({
@@ -107,20 +108,24 @@ function parseStat(forceDot = false) {
         let count = 0;
         let line;
         while ((line = dstream.read_line(null))) {
-            line = String(line);
+            if (line instanceof Uint8Array) {
+                line = imports.byteArray.toString(line);
+            }else{
+                line = new String(line);
+            }
             let fields = line.split(/ +/);
-            if (fields.length<=2) break;
+            if (fields.length <= 2) break;
 
-            if (parseInt(fields[2])%16 === 0 
-                    && fields[3].indexOf('md0') != 0
-                    && fields[3].indexOf('ram0') != 0
-                    && fields[3].indexOf('dm-0') != 0
-                    && fields[3].indexOf('zram0') != 0
-                    && fields[3].indexOf('loop0') != 0) {
+            if (parseInt(fields[2]) % 16 === 0 &&
+                fields[3].indexOf('md0') != 0 &&
+                fields[3].indexOf('ram0') != 0 &&
+                fields[3].indexOf('dm-0') != 0 &&
+                fields[3].indexOf('zram0') != 0 &&
+                fields[3].indexOf('loop0') != 0) {
                 count = count + parseInt(fields[6]) + parseInt(fields[10]);
                 // log(fields[3] + ':' + fields[6] + ' ' + fields[10] + ' ' + count);
             }
-            
+
         }
         fstream.close(null);
 
@@ -180,7 +185,7 @@ function speedToString(amount) {
     speed_map = ["B/s", "K/s", "M/s", "G/s"];
 
     if (amount === 0)
-        return "0"  + speed_map[0];
+        return "0" + speed_map[0];
 
     let unit = 0;
     while (amount >= 1000) { // 1M=1024K, 1MB/s=1000MB/s
@@ -192,7 +197,7 @@ function speedToString(amount) {
         digits = 0;
     else if (amount >= 10) // 10MB 10.2
         digits = 1;
-    else 
+    else
         digits = 2;
     return String(amount.toFixed(digits)) + speed_map[unit];
 }

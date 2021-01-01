@@ -74,7 +74,7 @@ var DockerMenu = class DockerMenu extends PanelMenu.Button {
             this.menu.addMenuItem(new PopupMenu.PopupMenuItem(errMsg));
             log(errMsg);
         }
-        this.actor.show();
+        this.show();
     }
 
     // Append containers to menu
